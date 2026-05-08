@@ -3,8 +3,8 @@ title: "SCTE35 transmission over MSF Event Timeline"
 abbrev: "SCTE35 over MSF"
 category: info
 
-docname: draft-wilaw-moq-scte35-MSF-event-timeline
-submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
+docname: draft-wilaw-moq-scte35-MSF-event-timeline-latest
+submissiontype: IETF
 number:
 date:
 consensus: true
