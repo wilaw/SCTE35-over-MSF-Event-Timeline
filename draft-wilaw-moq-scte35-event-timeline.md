@@ -49,7 +49,7 @@ informative:
 
 --- abstract
 
-Defines the transmission of SCTE35 data over MSF Event timeline tracks. 
+Defines the transmission of SCTE35 data over MSF Event timeline tracks.
 
 
 --- middle
@@ -59,7 +59,7 @@ Defines the transmission of SCTE35 data over MSF Event timeline tracks.
 MOQT Streaming Format {{MSF}} defines Event Timeline tracks as a generic mechanism for
 transmitting ad hoc data associated with MSF media tracks. {{SCTE35}} markers signal ad insertion
 points, program boundaries, and other broadcast events. This draft specifies how SCTE35
-data can be transmitted using MSF Event Timeline tracks. 
+data can be transmitted using MSF Event Timeline tracks.
 
 # Track properties
 A MSF track carrying {{SCTE35}} or {{SCTE214-1}} data MUST
@@ -80,7 +80,7 @@ The scte35_payload contains either the Base64-encoded binary representation of t
 splice_info_section() or a string containing the escaped XML representation of the SCTE 35
 message. The encoding format is determined by the eventType declared in the track properties.
 
-```json
+~~~ json
 {
   "m": 124500,
   "data": {
@@ -89,7 +89,7 @@ message. The encoding format is determined by the eventType declared in the trac
   }
 }
 
-```
+~~~
 
 ## Definition of the Media Time ("m")
 
@@ -120,7 +120,7 @@ and asynchronous "immediate" commands.
 ## Payload Encoding Requirements
 
 * Binary Payloads: When the track is configured for binary carriage, the `scte35_payload` MUST
-  be a Base64-encoded string of the `splice_info_section()` as defined in {{SCTE35}}. 
+  be a Base64-encoded string of the `splice_info_section()` as defined in {{SCTE35}}.
 * XML Payloads: When the track is configured for XML carriage, the `scte35_payload` MUST be a
   string containing the XML representation as defined in {{SCTE35}}. Characters that are
   reserved in JSON (such as double quotes, backslashes, and control characters) MUST be properly
@@ -141,7 +141,7 @@ formats (Binary and XML).
 This example shows the standard frame-accurate splice using a `pts_time`. The `m` value is the
 calculated millisecond offset, and the payload is the Base64-encoded binary `splice_info_section()`.
 
-```json
+~~~ json
 [
   {
     "m": 480500,
@@ -159,7 +159,7 @@ calculated millisecond offset, and the payload is the Base64-encoded binary `spl
   }
 ]
 
-```
+~~~
 
 ## Example 2: XML Encoding with Immediate Flag
 
@@ -167,7 +167,7 @@ In this scenario, the track is configured for XML. The first record illustrates 
 (no pre-calculated PTS), while the second shows a standard timed event. Note the JSON-escaped quotes
 within the XML string.
 
-```json
+~~~ json
 [
   {
     "m": 62000,
@@ -184,15 +184,14 @@ within the XML string.
     }
   }
 ]
-
-```
+~~~
 
 ## Example 3: Mixed Timing (UTC and Cancellation)
 
 This example demonstrates the robustness of the "t" field, showing a message anchored to a
 UTC wallclock and a subsequent "none" type record used for an event cancellation.
 
-```json
+~~~ json
 [
   {
     "m": 1500000,
@@ -210,9 +209,7 @@ UTC wallclock and a subsequent "none" type record used for an event cancellation
   }
 ]
 
-```
-
----
+~~~
 
 
 # Security Considerations
