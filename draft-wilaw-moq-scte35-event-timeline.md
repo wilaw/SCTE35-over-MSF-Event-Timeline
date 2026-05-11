@@ -15,6 +15,7 @@ keyword:
  - MSF
  - Eventtimeline
  - SCTE35
+ - MOQT
 venue:
   group: "Media Over QUIC"
   type: "Working Group"
