@@ -8,27 +8,28 @@
 <meta content="Will Law" name="author">
 <meta content="Suhas Nandakumar" name="author">
 <meta content="
-       Defines the transmission of SCTE35 data over MSF Event timeline tracks. 
+       Defines the transmission of SCTE 35 data over MSF Event Timeline tracks. 
     " name="description">
-<meta content="xml2rfc 3.33.0" name="generator">
+<meta content="xml2rfc 3.34.0" name="generator">
 <meta content="MSF" name="keyword">
 <meta content="Eventtimeline" name="keyword">
 <meta content="SCTE35" name="keyword">
 <meta content="MOQT" name="keyword">
 <meta content="draft-wilaw-moq-scte35-event-timeline-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.33.0
-    Python 3.12.13
-    ConfigArgParse 1.7
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 6.0.2
-    platformdirs 4.9.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.7.0
+    wcwidth 0.8.2
 -->
 <link href="draft-wilaw-moq-scte35-event-timeline.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -295,16 +296,19 @@ h1, h2, h3, h4, h5, h6 {
   font-size-adjust: 0.5;
   color: var(--title-color);
 }
-h1#title {
-  font-size: 32px;
-  line-height: 40px;
-  clear: both;
-}
-h1#title, h1#rfcnum {
-  margin: 1.5em 0 0.2em;
-}
-h1#rfcnum + h1#title {
-  margin: 0.2em 0;
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
 }
 
 h1, h2, h3 {
@@ -324,10 +328,10 @@ h4, h5, h6 {
 #abstract+p {
   font-size: 18px;
   line-height: 24px;
-}
-#abstract+p code, #abstract+p samp, #abstract+p tt {
-  font-size: 16px;
-  line-height: 0;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
 }
 
 p {
@@ -338,59 +342,59 @@ p {
 div {
   margin: 0;
 }
-.alignRight.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignRight.art-text pre {
-  padding: 0;
-  width: auto;
-}
 .alignRight {
   margin: 1em 0;
-}
-.alignRight > *:first-child {
-  border: none;
-  margin: 0;
-  float: right;
-  clear: both;
-}
-.alignRight > *:nth-child(2) {
-  clear: both;
-  display: block;
-  border: none;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
 }
 svg {
   display: block;
-}
-/* font-family isn't space-separated, but =~ will have to do */
-svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
-  font-family: var(--font-mono);
-}
-.alignCenter.art-text {
-  background-color: var(--highlight-color);
-  border: 1px solid var(--line-color);
-  border-radius: 3px;
-  padding: 0.5em 1em 0;
-  margin-bottom: 0.5em;
-}
-.alignCenter.art-text pre {
-  padding: 0;
-  width: auto;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
 }
 .alignCenter {
   margin: 1em 0;
-}
-.alignCenter > *:first-child {
-  border: none;
-  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
-     support flexbox yet.
-  */
-  display: table;
-  margin: 0 auto;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
 }
 
 /* lists */
@@ -428,26 +432,25 @@ dl {
     --indent: 5ch;
     & > dt {
       min-width: calc(var(--indent) - 2ch);
+      float: none;
     }
-  }
-  &.olPercent > dt {
-    float: none;
   }
 
   dl > dd > & {
     margin-top: 0.5em;
     margin-bottom: 0;
   }
-}
-dl:not(.dlNewline) > dt {
-  float: left;
-  margin-right: 2ch;
-  min-width: 8ch;
-}
-dl > dd {
-  margin-bottom: .8em;
-  margin-left: var(--indent) !important; /* stupid element overrides */
-  min-height: 2ex;
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
 }
 :is(dl.compact, .dlCompact) > dd {
   margin-bottom: 0;
@@ -463,20 +466,22 @@ dl > dd {
 }
 
 /* links */
-a, a[href].selfRef:hover {
+a {
   text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
 }
-a[href] {
-  color: var(--link-color);
-}
-a[href].selfRef, .iref + a[href].internal {
+.iref + a[href].internal {
   color: var(--text-color);
-}
-a[href]:hover {
-  text-decoration: underline;
-}
-a[href].selfRef:hover {
-  background-color: var(--highlight-color);
 }
 a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
   white-space: nowrap;
@@ -512,9 +517,9 @@ img {
 figure {
   margin: 0.5em 0;
   padding: 0;
-}
-figure blockquote {
-  margin: 0.8em 0.4em 0.4em;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
 }
 figcaption, caption {
   font-style: italic;
@@ -524,17 +529,19 @@ figcaption, caption {
 }
 @media screen {
   /* Auto-collapse boilerplate. */
-  :is(#status-of-memo, #copyright) p {
-    margin: -2px 0;
-    max-height: 0;
-    transition: max-height 2s ease, margin 0.5s ease 0.5s;
-    overflow: hidden;
-  }
-  :is(#status-of-memo, #copyright):hover p,
-  :is(#status-of-memo, #copyright) h2:target ~ p {
-    margin: 0.5em 0;
-    max-height: 500px;
-    overflow: auto;
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
   }
   pre, svg {
     display: inline-block;
@@ -584,25 +591,17 @@ table {
   max-width: 100%;
   margin: 0 0 1em;
   border-collapse: collapse;
-}
-table.right {
-  margin-left: auto;
-}
-table.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-table.left {
-  margin-right: auto;
-}
-table .text-left {
-  text-align: left;
-}
-table .text-center {
-  text-align: center;
-}
-table .text-right {
-  text-align: right;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
 }
 
 thead, tbody {
@@ -622,13 +621,6 @@ th {
 :is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
   background-color: var(--highlight-color);
 }
-table caption {
-  margin: 0;
-  padding: 3px 0 3px 1em;
-}
-table p {
-  margin: 0;
-}
 
 /* pilcrow */
 a.pilcrow {
@@ -639,18 +631,16 @@ a.pilcrow {
     color: var(--pilcrow-weak);
     &:hover { text-decoration: none; }
   }
-}
-@media not print {
-  :hover > a.pilcrow, a.pilcrow:focus {
-    opacity: 1;
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
   }
-  a.pilcrow[href]:hover {
-    color: var(--pilcrow-strong);
-    background-color: transparent;
-  }
-}
-@media print {
-  a.pilcrow {
+  @media print {
     display: none;
   }
 }
@@ -709,9 +699,9 @@ sub, sup {
   font-size: 0.9em;
   font-style: italic;
   margin-top: 2em;
-}
-.docInfo .prepared {
-  float: right;
+  & .prepared {
+    float: right;
+  }
 }
 
 /* table of contents */
@@ -801,23 +791,27 @@ hr.addr {
   max-width: calc(100% - 16px);
 }
 @media (min-width: 500px) {
-  #authors-addresses > section {
-    column-count: 2;
-    column-gap: 20px;
-  }
-  #authors-addresses > section > h2 {
-    column-span: all;
-  }
-  /* hack for break-inside: avoid-column */
-  #authors-addresses address {
-    display: inline-block;
-    break-inside: avoid-column;
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
   }
 }
 
 /* Comments */
-.rfcEditorRemove p:first-of-type {
-  font-style: italic;
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
 }
 .cref {
   background-color: rgba(249, 232, 105, 0.3);
@@ -828,19 +822,21 @@ hr.addr {
 }
 
 @media screen {
-  #toc nav {
-    font-family: var(--font-title);
-    font-weight: 360;
-    & > ul { margin-bottom: 2em; }
-    & ul {
-      margin: 0 0 0 4px;
-      & :is(p, li) {
-        margin: 2px 0;
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
       }
     }
-  }
-  #toc a.toplink {
-    float: right;
+    & a.toplink {
+      float: right;
+    }
   }
 }
 @media not screen {
@@ -861,54 +857,54 @@ hr.addr {
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 2px 0 2px 6px;
-    padding-right: 1em;
-    font-size: 18px;
-    line-height: 24px;
-    min-width: 190px;
-    text-align: right;
-    background-color: #444;
-    color: white;
-    cursor: pointer;
-    &::before { /* css hamburger */
-      float: right;
-      position: relative;
-      width: 1em;
-      height: 1px;
-      left: -164px;
-      margin: 8px 0 0 0;
-      background: white none repeat scroll 0 0;
-      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
-      content: "";
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
     }
-  }
-  #toc nav {
-    display: none;
-    background-color: var(--background-color);
-    padding: 0.5em 1em 1em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    height: calc(100vh - 48px);
-    border-left: 1px solid #ddd;
-  }
-  #toc.active {
-    opacity: 1;
-    & nav { display: block; }
-  }
-  /* Make the collapsed ToC header render white on gray also when it's a link */
-  #toc h2 a,
-  #toc h2 a:is(:link, :focus, :hover),
-  #toc a.toplink,
-  #toc a.toplink:hover {
-    color: white;
-    background-color: #444;
-    text-decoration: none;
-  }
-  #toc a.toplink {
-    margin: 2px 0.5em 0;
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
   }
 }
 
@@ -927,26 +923,26 @@ hr.addr {
     margin: 0;
     padding: 0;
     z-index: 1;
-  }
-  #toc h2 {
-    margin: 0;
-    padding: 0.25em 1em 1em 0;
-  }
-  #toc nav {
-    display: block;
-    height: calc(90vh - 84px);
-    bottom: 0;
-    padding: 0.5em 0 2em;
-    overflow: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
   }
   img { /* future proofing */
     max-width: 100%;
     height: auto;
-  }
-  #toc a.toplink {
-    margin: 8px 0.5em 0;
   }
 }
 
@@ -962,12 +958,13 @@ hr.addr {
   #n-copyright-notice {
     border-bottom: none;
   }
-  #toc, #n-introduction {
-    page-break-before: always;
-  }
   #toc {
+    page-break-before: always;
     border-top: none;
     padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
   }
   figure, pre, .vcard {
     page-break-inside: avoid;
@@ -1029,17 +1026,19 @@ hr.addr {
 }
 
 /* SVG Trick: a prefix match works because only black and white are allowed */
-svg :is([stroke="black"], [stroke^="#000"]) {
-  stroke: var(--text-color);
-}
-svg :is([stroke="white"], [stroke^="#fff"]) {
-  stroke: var(--background-color);
-}
-svg :is([fill="black"], [fill^="#000"], :not([fill])) {
-  fill: var(--text-color);
-}
-svg :is([fill="white"], [fill^="#fff"]) {
-  fill: var(--background-color);
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
 }
 </style>
 
@@ -1049,11 +1048,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">SCTE35 over MSF</td>
-<td class="right">May 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Law &amp; Nandakumar</td>
-<td class="center">Expires 12 November 2026</td>
+<td class="center">Expires 4 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wilaw-moq-scte35-event-timeline-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-11" class="published">11 May 2026</time>
+<time datetime="2026-07-03" class="published">3 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-12">12 November 2026</time></dd>
+<dd class="expires"><time datetime="2027-01-04">4 January 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1088,7 +1087,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">SCTE35 transmission over MSF Event Timeline</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Defines the transmission of SCTE35 data over MSF Event timeline tracks.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">Defines the transmission of SCTE 35 data over MSF Event Timeline tracks.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1096,7 +1095,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://wilaw.github.io/SCTE35-over-MSF-Event-Timeline/draft-wilaw-moq-scte35-MSF-event-timeline.html">https://wilaw.github.io/SCTE35-over-MSF-Event-Timeline/draft-wilaw-moq-scte35-MSF-event-timeline.html</a></span>.
+        The latest revision of this draft can be found at <span><a href="https://wilaw.github.io/SCTE35-over-MSF-Event-Timeline/draft-wilaw-moq-scte35-event-timeline.html">https://wilaw.github.io/SCTE35-over-MSF-Event-Timeline/draft-wilaw-moq-scte35-event-timeline.html</a></span>.
         Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-wilaw-moq-scte35-event-timeline/">https://datatracker.ietf.org/doc/draft-wilaw-moq-scte35-event-timeline/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
@@ -1125,7 +1124,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 12 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 4 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1167,13 +1166,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-record-structure" class="internal xref">Record Structure</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-definition-of-the-media-tim" class="internal xref">Definition of the Media Time ("m")</a></p>
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-index-selection" class="internal xref">Index Selection</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-the-t-field-timing-type" class="internal xref">The "t" Field (Timing Type)</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-payload-encoding-requiremen" class="internal xref">Payload Encoding Requirements</a></p>
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-payload-encoding-requiremen" class="internal xref">Payload Encoding Requirements</a></p>
 </li>
             </ul>
 </li>
@@ -1237,7 +1233,7 @@ data can be transmitted using MSF Event Timeline tracks.<a href="#section-1-1" c
       <h2 id="name-track-properties">
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-track-properties" class="section-name selfRef">Track properties</a>
       </h2>
-<p id="section-2-1">A MSF track carrying <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span> or <span>[<a href="#SCTE214-1" class="cite xref">SCTE214-1</a>]</span> data MUST<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-1">An MSF track carrying <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span> data MUST<a href="#section-2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2-2.1">
           <p id="section-2-2.1.1">declare a packaging value of "eventtimeline"<a href="#section-2-2.1.1" class="pilcrow">¶</a></p>
@@ -1261,95 +1257,114 @@ data can be transmitted using MSF Event Timeline tracks.<a href="#section-1-1" c
         <h3 id="name-record-structure">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-record-structure" class="section-name selfRef">Record Structure</a>
         </h3>
-<p id="section-3.1-1">Each record in the MSF Event Timeline track for SCTE 35 MUST be a <span>[<a href="#JSON" class="cite xref">JSON</a>]</span> object containing
-an "m" field and a "data" field. The "data" field MUST be an object containing a scte35_payload
-and a t (timing type) field.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">The scte35_payload contains either the Base64-encoded binary representation of the
-splice_info_section() or a string containing the escaped XML representation of the SCTE 35
-message. The encoding format is determined by the eventType declared in the track properties.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">Each record in the MSF Event Timeline track for SCTE 35 MUST be a JSON object conforming to
+the Event Timeline data format defined in <span>[<a href="#MSF" class="cite xref">MSF</a>]</span> Section 8.1: it MUST contain exactly one
+index reference field (t, l, or m), selected per the precedence rules in Section 3.2, and a
+data field.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">The data field MUST be an object containing a single scte35_payload member. The scte35_payload
+contains either the Base64-encoded binary representation of the splice_info_section() or a
+string containing the escaped XML representation of the SCTE 35 message, per the eventType
+declared in the track properties (Section 2).<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-3.1-3">
 <pre>
 {
-  "m": 124500,
+  "m": 480500,
   "data": {
-    "scte35_payload": "&lt;scte35:SpliceInfoSection ... &gt; ... &lt;/scte35:SpliceInfoSection&gt;",
-    "t": "pts"
+    "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA=="
   }
 }
-
 </pre><a href="#section-3.1-3" class="pilcrow">¶</a>
 </div>
+<div class="lang-json sourcecode" id="section-3.1-4">
+<pre>
+{
+  "t": 1756885678361,
+  "data": {
+    "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg=="
+  }
+}
+</pre><a href="#section-3.1-4" class="pilcrow">¶</a>
+</div>
+<div class="lang-json sourcecode" id="section-3.1-5">
+<pre>
+{
+  "l": [42, 0],
+  "data": {
+    "scte35_payload": "&lt;SpliceInfoSection&gt;&lt;SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/&gt;&lt;/SpliceInfoSection&gt;"
+  }
+}
+</pre><a href="#section-3.1-5" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-6">Since the index reference field itself identifies the timing source used for a record, no
+additional field is required inside data to disambiguate it. Receivers requiring finer-grained
+classification (e.g., distinguishing an immediate splice from an event cancellation) MAY inspect
+the scte35_payload itself, since this information is already present in the SCTE 35 message
+(splice_immediate_flag, splice_event_cancel_indicator, etc.) and duplicating it in the envelope
+would be redundant.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="definition-of-the-media-time-m">
+<div id="index-selection">
 <section id="section-3.2">
-        <h3 id="name-definition-of-the-media-tim">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-definition-of-the-media-tim" class="section-name selfRef">Definition of the Media Time ("m")</a>
+        <h3 id="name-index-selection">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-index-selection" class="section-name selfRef">Index Selection</a>
         </h3>
-<p id="section-3.2-1">The "m" field represents the media timeline offset in milliseconds. To ensure deterministic
-behavior, "m" MUST be derived using the following precedence:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-3.2-2">
-<li id="section-3.2-2.1">
-            <p id="section-3.2-2.1.1">Timed Events (PTS): If a pts_time (binary) or ptsTime (XML) is present, "m" is the
-millisecond equivalent of the adjusted PTS:
-$m = \lfloor ((pts_time + pts_adjustment) \pmod{2^{33}}) / 90 \rfloor$<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-3.2-2.2">
-            <p id="section-3.2-2.2.1">Immediate Events: If splice_immediate_flag is '1', "m" MUST be the media time of the
-first video frame following the message's insertion into the MSF stream.<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-3.2-2.3">
-            <p id="section-3.2-2.3.1">Wallclock Events: If a utc_splice_time is present without a PTS, "m" MUST be the media
-time corresponding to that UTC moment.Other Events: For messages without timing
-(e.g., splice_event_cancel_indicator), "m" represents the media time at which the message
-is intended to be processed.<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
-</li>
-        </ol>
-</section>
-</div>
-<div id="the-t-field-timing-type">
-<section id="section-3.3">
-        <h3 id="name-the-t-field-timing-type">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-the-t-field-timing-type" class="section-name selfRef">The "t" Field (Timing Type)</a>
-        </h3>
-<p id="section-3.3-1">The <code>t</code> field within the <code>data</code> object provides the receiver with context regarding the source
-of the "m" value. This allows clients to distinguish between frame-accurate scheduled splices
-and asynchronous "immediate" commands.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">Each record MUST select its index reference field according to the following precedence, applied
+to the SCTE 35 message being carried:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.3-2.1">
-            <p id="section-3.3-2.1.1"><code>pts</code>: The "m" value was derived from a 90kHz PTS value.<a href="#section-3.3-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3.2-2.1">
+            <p id="section-3.2-2.1.1">PTS-timed events: If a pts_time (binary) or ptsTime (XML) is present, the record MUST use m,
+the media time in milliseconds, computed as: floor(((pts_time + pts_adjustment) mod 2^33) / 90).
+This value MUST be expressed in the same coordinate space as the media time defined for the
+corresponding Media Timeline track or template (<span>[<a href="#MSF" class="cite xref">MSF</a>]</span> Section 7.1.1) of the track(s) named in
+this track's depends attribute — that is, pts_time and the referenced media track's timestamps
+MUST share a common zero-point and epoch. Publishers MUST resolve any PTS discontinuities or
+2^33 wraparound in the source SCTE 35 stream before computing m, so that the resulting value
+remains monotonic and consistent with the associated media track's timeline.<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.3-2.2">
-            <p id="section-3.3-2.2.1"><code>immediate</code>: The "m" value was derived from the arrival time of an immediate flag.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">Wallclock-timed events: If a utc_splice_time is present without a pts_time, the record MUST
+use t, set directly to the UTC time expressed as milliseconds since the Unix epoch, per
+<span>[<a href="#MSF" class="cite xref">MSF</a>]</span> Section 8.1. No conversion to media time is required or permitted; this avoids requiring
+the publisher to maintain a UTC-to-media-time mapping solely for signaling purposes.<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.3-2.3">
-            <p id="section-3.3-2.3.1"><code>utc</code>: The "m" value was derived from a UTC wallclock timestamp.<a href="#section-3.3-2.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.2-2.3">
+            <p id="section-3.2-2.3.1">Immediate events: If splice_immediate_flag is 1 and no pts_time is present, the record MUST
+use l, set to the MOQT Location — [Group ID, Object ID] — of the media Object at or immediately
+preceding which the splice is to take effect. This anchors the event to an actual encoded Object
+in the dependent media track rather than an approximated wallclock or media time.<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.3-2.4">
-            <p id="section-3.3-2.4.1"><code>none</code>: The "m" value represents the emission time for a non-timed event.<a href="#section-3.3-2.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.2-2.4">
+            <p id="section-3.2-2.4.1">Other events: For messages that carry no timing information of their own
+(e.g., splice_event_cancel_indicator, splice_null()), the record MUST use l, set to the MOQT
+Location of the media Object with which the record is associated at the time of publication.<a href="#section-3.2-2.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
+<p id="section-3.2-3">Publishers MUST use only one index reference field per record, per <span>[<a href="#MSF" class="cite xref">MSF</a>]</span> Section 8.1. Because the
+four cases above use t, m, and l at different times within the same track, this track is a case
+where index reference types intentionally vary record-to-record, rather than following the
+"SHOULD use the same index reference type" guidance in <span>[<a href="#MSF" class="cite xref">MSF</a>]</span> Section 8.1 — that guidance is best
+suited to tracks with a single, uniform timing source, which SCTE 35 signaling is not.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="payload-encoding-requirements">
-<section id="section-3.4">
+<section id="section-3.3">
         <h3 id="name-payload-encoding-requiremen">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-payload-encoding-requiremen" class="section-name selfRef">Payload Encoding Requirements</a>
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-payload-encoding-requiremen" class="section-name selfRef">Payload Encoding Requirements</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-3.4-1.1">
-            <p id="section-3.4-1.1.1">Binary Payloads: When the track is configured for binary carriage, the <code>scte35_payload</code> MUST
-be a Base64-encoded string of the <code>splice_info_section()</code> as defined in <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span>.<a href="#section-3.4-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3.3-1.1">
+            <p id="section-3.3-1.1.1">Binary Payloads: When the track is configured for binary carriage, the scte35_payload MUST be
+a Base64-encoded string of the splice_info_section() as defined in <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span>.<a href="#section-3.3-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.4-1.2">
-            <p id="section-3.4-1.2.1">XML Payloads: When the track is configured for XML carriage, the <code>scte35_payload</code> MUST be a
-string containing the XML representation as defined in <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span>. Characters that are
-reserved in JSON (such as double quotes, backslashes, and control characters) MUST be properly
-escaped to maintain JSON validity as per <span>[<a href="#JSON" class="cite xref">JSON</a>]</span>.<a href="#section-3.4-1.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.3-1.2">
+            <p id="section-3.3-1.2.1">XML Payloads: When the track is configured for XML carriage, the scte35_payload MUST be a string
+containing the XML representation as defined in <span>[<a href="#SCTE35" class="cite xref">SCTE35</a>]</span>. Characters that are reserved in JSON
+(such as double quotes, backslashes, and control characters) MUST be properly escaped to maintain
+JSON validity as per <span>[<a href="#JSON" class="cite xref">JSON</a>]</span>.<a href="#section-3.3-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.4-2">Implementations MUST NOT mix binary and XML payloads within the same MSF Media Timeline track
-to ensure predictable parsing at the client.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">Implementations MUST NOT mix binary and XML payloads within the same MSF Event Timeline track
+to ensure predictable parsing at the client.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1360,34 +1375,32 @@ to ensure predictable parsing at the client.<a href="#section-3.4-2" class="pilc
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
       </h2>
 <p id="section-4-1">To illustrate the implementation of SCTE 35 within the MSF Event Timeline track, the following
-examples demonstrate the mapping of various timing sources and the two supported encoding
-formats (Binary and XML).<a href="#section-4-1" class="pilcrow">¶</a></p>
+examples demonstrate the mapping of various timing sources — using MSF's native t, l, and m index
+reference fields — and the two supported encoding formats (Binary and XML).<a href="#section-4-1" class="pilcrow">¶</a></p>
 <div id="example-1-binary-encoding-with-pts-timing">
 <section id="section-4.1">
         <h3 id="name-example-1-binary-encoding-w">
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-example-1-binary-encoding-w" class="section-name selfRef">Example 1: Binary Encoding with PTS Timing</a>
         </h3>
-<p id="section-4.1-1">This example shows the standard frame-accurate splice using a <code>pts_time</code>. The <code>m</code> value is the
-calculated millisecond offset, and the payload is the Base64-encoded binary <code>splice_info_section()</code>.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-1">This example shows the standard frame-accurate splice using a pts_time. Per Section 3.2 case 1,
+the record uses m, the calculated millisecond offset, and the payload is the Base64-encoded binary
+splice_info_section().<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-4.1-2">
 <pre>
 [
   {
     "m": 480500,
     "data": {
-      "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA==",
-      "t": "pts"
+      "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA=="
     }
   },
   {
     "m": 510500,
     "data": {
-      "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArYf+/+AAAAAH4AARSyAAAAAA==",
-      "t": "pts"
+      "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArYf+/+AAAAAH4AARSyAAAAAA=="
     }
   }
 ]
-
 </pre><a href="#section-4.1-2" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1398,23 +1411,22 @@ calculated millisecond offset, and the payload is the Base64-encoded binary <cod
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-example-2-xml-encoding-with" class="section-name selfRef">Example 2: XML Encoding with Immediate Flag</a>
         </h3>
 <p id="section-4.2-1">In this scenario, the track is configured for XML. The first record illustrates an "immediate" event
-(no pre-calculated PTS), while the second shows a standard timed event. Note the JSON-escaped quotes
-within the XML string.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+(splice_immediate_flag="1", no PTS) — per Section 3.2 case 3, it uses l, the MOQT Location of the
+media Object at which the splice takes effect. The second record shows a standard PTS-timed event,
+using m. Note the JSON-escaped quotes within the XML string.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-4.2-2">
 <pre>
 [
   {
-    "m": 62000,
+    "l": [15, 0],
     "data": {
-      "scte35_payload": "&lt;SpliceInfoSection&gt;&lt;SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/&gt;&lt;/SpliceInfoSection&gt;",
-      "t": "immediate"
+      "scte35_payload": "&lt;SpliceInfoSection&gt;&lt;SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/&gt;&lt;/SpliceInfoSection&gt;"
     }
   },
   {
     "m": 92000,
     "data": {
-      "scte35_payload": "&lt;SpliceInfoSection&gt;&lt;TimeSignal&gt;&lt;SpliceTime ptsTime=\"8280000\"/&gt;&lt;/TimeSignal&gt;&lt;/SpliceInfoSection&gt;",
-      "t": "pts"
+      "scte35_payload": "&lt;SpliceInfoSection&gt;&lt;TimeSignal&gt;&lt;SpliceTime ptsTime=\"8280000\"/&gt;&lt;/TimeSignal&gt;&lt;/SpliceInfoSection&gt;"
     }
   }
 ]
@@ -1427,27 +1439,27 @@ within the XML string.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
         <h3 id="name-example-3-mixed-timing-utc-">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-example-3-mixed-timing-utc-" class="section-name selfRef">Example 3: Mixed Timing (UTC and Cancellation)</a>
         </h3>
-<p id="section-4.3-1">This example demonstrates the robustness of the "t" field, showing a message anchored to a
-UTC wallclock and a subsequent "none" type record used for an event cancellation.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-1">This example demonstrates a track that varies its index reference field record-to-record, as permitted
+by Section 3.2. The first record is anchored to a UTC wallclock moment — per case 2, it uses t directly,
+with no media-time conversion required. The second is a splice_event_cancel_indicator cancellation with
+no timing information of its own — per case 4, it uses l, referencing the Location of the media Object
+with which it is associated at the time of publication.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-4.3-2">
 <pre>
 [
   {
-    "m": 1500000,
+    "t": 1756885678361,
     "data": {
-      "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg==",
-      "t": "utc"
+      "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg=="
     }
   },
   {
-    "m": 1500500,
+    "l": [15, 3],
     "data": {
-      "scte35_payload": "/DAWAAAAAAAAAP/wBQIAAAAAf3/yD77y",
-      "t": "none"
+      "scte35_payload": "/DAWAAAAAAAAAP/wBQIAAAAAf3/yD77y"
     }
   }
 ]
-
 </pre><a href="#section-4.3-2" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1516,12 +1528,12 @@ potentially leading to resource exhaustion or a degraded user experience.<a href
         <tbody>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">urn:scte:scte35:2022:bin</td>
-            <td class="text-left" rowspan="1" colspan="1">SCTE-35 binary splice_info_section</td>
+            <td class="text-left" rowspan="1" colspan="1">SCTE 35 binary splice_info_section</td>
             <td class="text-left" rowspan="1" colspan="1">this</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">urn:scte:scte35:2022:xml</td>
-            <td class="text-left" rowspan="1" colspan="1">SCTE-35 XML representation</td>
+            <td class="text-left" rowspan="1" colspan="1">SCTE 35 XML representation</td>
             <td class="text-left" rowspan="1" colspan="1">this</td>
           </tr>
         </tbody>
@@ -1550,13 +1562,13 @@ potentially leading to resource exhaustion or a degraded user experience.<a href
       <dd>
 <span class="refAuthor">Law, W.</span>, <span class="refTitle">"MOQT Streaming Format"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-msf-00</span>, <time datetime="2026-01-19" class="refDate">19 January 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-00">https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-00</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="SCTE214-1">[SCTE214-1]</dt>
-      <dd>
-<span class="refTitle">"SCTE 214-1: MPEG DASH for IP-Based Cable Services Part 1 - MPD Constraints and Extensions"</span>, <time datetime="2022" class="refDate">2022</time>, <span>&lt;<a href="https://www.scte.org/standards/library/catalog/scte-214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-constraints-and-extensions/">https://www.scte.org/standards/library/catalog/scte-214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-constraints-and-extensions/</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="SCTE35">[SCTE35]</dt>
-    <dd>
+      <dd>
 <span class="refTitle">"SCTE 35: Digital Program Insertion Cueing Message"</span>, <time datetime="2022" class="refDate">2022</time>, <span>&lt;<a href="https://www.scte.org/standards/library/catalog/scte-35-digital-program-insertion-cueing-message/">https://www.scte.org/standards/library/catalog/scte-35-digital-program-insertion-cueing-message/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SCTE214-1">[SCTE214-1]</dt>
+    <dd>
+<span class="refTitle">"SCTE 214-1: MPEG DASH for IP-Based Cable Services Part 1 - MPD Constraints and Extensions"</span>, <time datetime="2022" class="refDate">2022</time>, <span>&lt;<a href="https://www.scte.org/standards/library/catalog/scte-214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-constraints-and-extensions/">https://www.scte.org/standards/library/catalog/scte-214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-constraints-and-extensions/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

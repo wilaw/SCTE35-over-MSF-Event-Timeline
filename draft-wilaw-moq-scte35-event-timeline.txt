@@ -5,8 +5,8 @@
 Media Over QUIC                                                   W. Law
 Internet-Draft                                                    Akamai
 Intended status: Informational                             S. Nandakumar
-Expires: 12 November 2026                                          Cisco
-                                                             11 May 2026
+Expires: 4 January 2027                                            Cisco
+                                                             3 July 2026
 
 
               SCTE35 transmission over MSF Event Timeline
@@ -14,7 +14,7 @@ Expires: 12 November 2026                                          Cisco
 
 Abstract
 
-   Defines the transmission of SCTE35 data over MSF Event timeline
+   Defines the transmission of SCTE 35 data over MSF Event Timeline
    tracks.
 
 About This Document
@@ -23,9 +23,9 @@ About This Document
 
    The latest revision of this draft can be found at
    https://wilaw.github.io/SCTE35-over-MSF-Event-Timeline/draft-wilaw-
-   moq-scte35-MSF-event-timeline.html.  Status information for this
-   document may be found at https://datatracker.ietf.org/doc/draft-
-   wilaw-moq-scte35-event-timeline/.
+   moq-scte35-event-timeline.html.  Status information for this document
+   may be found at https://datatracker.ietf.org/doc/draft-wilaw-moq-
+   scte35-event-timeline/.
 
    Discussion of this document takes place on the Media Over QUIC
    Working Group mailing list (mailto:moq@ietf.org), which is archived
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 November 2026.
+   This Internet-Draft will expire on 4 January 2027.
 
 Copyright Notice
 
@@ -72,9 +72,8 @@ Table of Contents
    2.  Track properties
    3.  SCTE 35 Mapping to MSF Event Timeline
      3.1.  Record Structure
-     3.2.  Definition of the Media Time ("m")
-     3.3.  The "t" Field (Timing Type)
-     3.4.  Payload Encoding Requirements
+     3.2.  Index Selection
+     3.3.  Payload Encoding Requirements
    4.  Examples
      4.1.  Example 1: Binary Encoding with PTS Timing
      4.2.  Example 2: XML Encoding with Immediate Flag
@@ -98,7 +97,7 @@ Table of Contents
 
 2.  Track properties
 
-   A MSF track carrying [SCTE35] or [SCTE214-1] data MUST
+   An MSF track carrying [SCTE35] data MUST
 
    *  declare a packaging value of "eventtimeline"
 
@@ -113,63 +112,95 @@ Table of Contents
 3.1.  Record Structure
 
    Each record in the MSF Event Timeline track for SCTE 35 MUST be a
-   [JSON] object containing an "m" field and a "data" field.  The "data"
-   field MUST be an object containing a scte35_payload and a t (timing
-   type) field.
+   JSON object conforming to the Event Timeline data format defined in
+   [MSF] Section 8.1: it MUST contain exactly one index reference field
+   (t, l, or m), selected per the precedence rules in Section 3.2, and a
+   data field.
 
-   The scte35_payload contains either the Base64-encoded binary
+   The data field MUST be an object containing a single scte35_payload
+   member.  The scte35_payload contains either the Base64-encoded binary
    representation of the splice_info_section() or a string containing
-   the escaped XML representation of the SCTE 35 message.  The encoding
-   format is determined by the eventType declared in the track
-   properties.
+   the escaped XML representation of the SCTE 35 message, per the
+   eventType declared in the track properties (Section 2).
 
    {
-     "m": 124500,
+     "m": 480500,
      "data": {
-       "scte35_payload": "<scte35:SpliceInfoSection ... > ... </scte35:SpliceInfoSection>",
-       "t": "pts"
+       "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA=="
      }
    }
 
-3.2.  Definition of the Media Time ("m")
+   {
+     "t": 1756885678361,
+     "data": {
+       "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg=="
+     }
+   }
 
-   The "m" field represents the media timeline offset in milliseconds.
-   To ensure deterministic behavior, "m" MUST be derived using the
-   following precedence:
+   {
+     "l": [42, 0],
+     "data": {
+       "scte35_payload": "<SpliceInfoSection><SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/></SpliceInfoSection>"
+     }
+   }
 
-   1.  Timed Events (PTS): If a pts_time (binary) or ptsTime (XML) is
-       present, "m" is the millisecond equivalent of the adjusted PTS:
-       $m = \lfloor ((pts_time + pts_adjustment) \pmod{2^{33}}) / 90
-       \rfloor$
+   Since the index reference field itself identifies the timing source
+   used for a record, no additional field is required inside data to
+   disambiguate it.  Receivers requiring finer-grained classification
+   (e.g., distinguishing an immediate splice from an event cancellation)
+   MAY inspect the scte35_payload itself, since this information is
+   already present in the SCTE 35 message (splice_immediate_flag,
+   splice_event_cancel_indicator, etc.) and duplicating it in the
+   envelope would be redundant.
 
-   2.  Immediate Events: If splice_immediate_flag is '1', "m" MUST be
-       the media time of the first video frame following the message's
-       insertion into the MSF stream.
+3.2.  Index Selection
 
-   3.  Wallclock Events: If a utc_splice_time is present without a PTS,
-       "m" MUST be the media time corresponding to that UTC moment.Other
-       Events: For messages without timing (e.g.,
-       splice_event_cancel_indicator), "m" represents the media time at
-       which the message is intended to be processed.
+   Each record MUST select its index reference field according to the
+   following precedence, applied to the SCTE 35 message being carried:
 
-3.3.  The "t" Field (Timing Type)
+   *  PTS-timed events: If a pts_time (binary) or ptsTime (XML) is
+      present, the record MUST use m, the media time in milliseconds,
+      computed as: floor(((pts_time + pts_adjustment) mod 2^33) / 90).
+      This value MUST be expressed in the same coordinate space as the
+      media time defined for the corresponding Media Timeline track or
+      template ([MSF] Section 7.1.1) of the track(s) named in this
+      track's depends attribute — that is, pts_time and the referenced
+      media track's timestamps MUST share a common zero-point and epoch.
+      Publishers MUST resolve any PTS discontinuities or 2^33 wraparound
+      in the source SCTE 35 stream before computing m, so that the
+      resulting value remains monotonic and consistent with the
+      associated media track's timeline.
 
-   The t field within the data object provides the receiver with context
-   regarding the source of the "m" value.  This allows clients to
-   distinguish between frame-accurate scheduled splices and asynchronous
-   "immediate" commands.
+   *  Wallclock-timed events: If a utc_splice_time is present without a
+      pts_time, the record MUST use t, set directly to the UTC time
+      expressed as milliseconds since the Unix epoch, per [MSF]
+      Section 8.1.  No conversion to media time is required or
+      permitted; this avoids requiring the publisher to maintain a UTC-
+      to-media-time mapping solely for signaling purposes.
 
-   *  pts: The "m" value was derived from a 90kHz PTS value.
+   *  Immediate events: If splice_immediate_flag is 1 and no pts_time is
+      present, the record MUST use l, set to the MOQT Location — [Group
+      ID, Object ID] — of the media Object at or immediately preceding
+      which the splice is to take effect.  This anchors the event to an
+      actual encoded Object in the dependent media track rather than an
+      approximated wallclock or media time.
 
-   *  immediate: The "m" value was derived from the arrival time of an
-      immediate flag.
+   *  Other events: For messages that carry no timing information of
+      their own (e.g., splice_event_cancel_indicator, splice_null()),
+      the record MUST use l, set to the MOQT Location of the media
+      Object with which the record is associated at the time of
+      publication.
 
-   *  utc: The "m" value was derived from a UTC wallclock timestamp.
+   Publishers MUST use only one index reference field per record, per
+   [MSF] Section 8.1.  Because the four cases above use t, m, and l at
+   different times within the same track, this track is a case where
+   index reference types intentionally vary record-to-record, rather
+   than following the "SHOULD use the same index reference type"
+   guidance in [MSF] Section 8.1 — that guidance is best suited to
+   tracks with a single, uniform timing source, which SCTE 35 signaling
+   is not.
 
-   *  none: The "m" value represents the emission time for a non-timed
-      event.
-
-3.4.  Payload Encoding Requirements
+3.3.  Payload Encoding Requirements
 
    *  Binary Payloads: When the track is configured for binary carriage,
       the scte35_payload MUST be a Base64-encoded string of the
@@ -182,34 +213,34 @@ Table of Contents
       be properly escaped to maintain JSON validity as per [JSON].
 
    Implementations MUST NOT mix binary and XML payloads within the same
-   MSF Media Timeline track to ensure predictable parsing at the client.
+   MSF Event Timeline track to ensure predictable parsing at the client.
 
 4.  Examples
 
    To illustrate the implementation of SCTE 35 within the MSF Event
    Timeline track, the following examples demonstrate the mapping of
-   various timing sources and the two supported encoding formats (Binary
-   and XML).
+   various timing sources — using MSF's native t, l, and m index
+   reference fields — and the two supported encoding formats (Binary and
+   XML).
 
 4.1.  Example 1: Binary Encoding with PTS Timing
 
    This example shows the standard frame-accurate splice using a
-   pts_time.  The m value is the calculated millisecond offset, and the
-   payload is the Base64-encoded binary splice_info_section().
+   pts_time.  Per Section 3.2 case 1, the record uses m, the calculated
+   millisecond offset, and the payload is the Base64-encoded binary
+   splice_info_section().
 
    [
      {
        "m": 480500,
        "data": {
-         "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA==",
-         "t": "pts"
+         "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArXf+/+AAAAAH4AARSyAAAAAA=="
        }
      },
      {
        "m": 510500,
        "data": {
-         "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArYf+/+AAAAAH4AARSyAAAAAA==",
-         "t": "pts"
+         "scte35_payload": "/DAhAAAAAAAAAP/wFAUAAArYf+/+AAAAAH4AARSyAAAAAA=="
        }
      }
    ]
@@ -217,46 +248,48 @@ Table of Contents
 4.2.  Example 2: XML Encoding with Immediate Flag
 
    In this scenario, the track is configured for XML.  The first record
-   illustrates an "immediate" event (no pre-calculated PTS), while the
-   second shows a standard timed event.  Note the JSON-escaped quotes
+   illustrates an "immediate" event (splice_immediate_flag="1", no PTS)
+   — per Section 3.2 case 3, it uses l, the MOQT Location of the media
+   Object at which the splice takes effect.  The second record shows a
+   standard PTS-timed event, using m.  Note the JSON-escaped quotes
    within the XML string.
 
    [
      {
-       "m": 62000,
+       "l": [15, 0],
        "data": {
-         "scte35_payload": "<SpliceInfoSection><SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/></SpliceInfoSection>",
-         "t": "immediate"
+         "scte35_payload": "<SpliceInfoSection><SpliceInsert spliceImmediateFlag=\"1\" eventId=\"101\"/></SpliceInfoSection>"
        }
      },
      {
        "m": 92000,
        "data": {
-         "scte35_payload": "<SpliceInfoSection><TimeSignal><SpliceTime ptsTime=\"8280000\"/></TimeSignal></SpliceInfoSection>",
-         "t": "pts"
+         "scte35_payload": "<SpliceInfoSection><TimeSignal><SpliceTime ptsTime=\"8280000\"/></TimeSignal></SpliceInfoSection>"
        }
      }
    ]
 
 4.3.  Example 3: Mixed Timing (UTC and Cancellation)
 
-   This example demonstrates the robustness of the "t" field, showing a
-   message anchored to a UTC wallclock and a subsequent "none" type
-   record used for an event cancellation.
+   This example demonstrates a track that varies its index reference
+   field record-to-record, as permitted by Section 3.2.  The first
+   record is anchored to a UTC wallclock moment — per case 2, it uses t
+   directly, with no media-time conversion required.  The second is a
+   splice_event_cancel_indicator cancellation with no timing information
+   of its own — per case 4, it uses l, referencing the Location of the
+   media Object with which it is associated at the time of publication.
 
    [
      {
-       "m": 1500000,
+       "t": 1756885678361,
        "data": {
-         "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg==",
-         "t": "utc"
+         "scte35_payload": "/DApAAAAAAAAAP/wBQb+AAAAAAAfAh1zY3RlMzU6U2VnbWVudGF0aW9uRGVzY3JpcHRvcg=="
        }
      },
      {
-       "m": 1500500,
+       "l": [15, 3],
        "data": {
-         "scte35_payload": "/DAWAAAAAAAAAP/wBQIAAAAAf3/yD77y",
-         "t": "none"
+         "scte35_payload": "/DAWAAAAAAAAAP/wBQIAAAAAf3/yD77y"
        }
      }
    ]
@@ -302,10 +335,10 @@ Table of Contents
     +==========================+=====================+===============+
     | Event Type               | Description         | Specification |
     +==========================+=====================+===============+
-    | urn:scte:scte35:2022:bin | SCTE-35 binary      | this          |
+    | urn:scte:scte35:2022:bin | SCTE 35 binary      | this          |
     |                          | splice_info_section |               |
     +--------------------------+---------------------+---------------+
-    | urn:scte:scte35:2022:xml | SCTE-35 XML         | this          |
+    | urn:scte:scte35:2022:xml | SCTE 35 XML         | this          |
     |                          | representation      |               |
     +--------------------------+---------------------+---------------+
 
@@ -327,16 +360,16 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-
               00>.
 
+   [SCTE35]   "SCTE 35: Digital Program Insertion Cueing Message", 2022,
+              <https://www.scte.org/standards/library/catalog/scte-35-
+              digital-program-insertion-cueing-message/>.
+
    [SCTE214-1]
               "SCTE 214-1: MPEG DASH for IP-Based Cable Services Part 1
               - MPD Constraints and Extensions", 2022,
               <https://www.scte.org/standards/library/catalog/scte-
               214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-
               constraints-and-extensions/>.
-
-   [SCTE35]   "SCTE 35: Digital Program Insertion Cueing Message", 2022,
-              <https://www.scte.org/standards/library/catalog/scte-35-
-              digital-program-insertion-cueing-message/>.
 
 Authors' Addresses
 
