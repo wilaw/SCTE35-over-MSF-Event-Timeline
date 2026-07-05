@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-02T03:53:15.770302+00:00",
+  "timestamp": "2026-07-05T03:45:14.687738+00:00",
   "repo": "wilaw/SCTE35-over-MSF-Event-Timeline",
   "labels": [
     {
@@ -50,5 +50,34 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOSXyNfM7th0Pl",
+      "title": "Revise SCTE 35 event timeline draft for clarity",
+      "url": "https://github.com/wilaw/SCTE35-over-MSF-Event-Timeline/pull/1",
+      "state": "MERGED",
+      "author": "wilaw",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Updated references and clarified SCTE 35 data transmission details in the MSF Event Timeline draft.",
+      "createdAt": "2026-07-03T09:42:02Z",
+      "updatedAt": "2026-07-03T09:43:05Z",
+      "baseRepository": "wilaw/SCTE35-over-MSF-Event-Timeline",
+      "baseRefName": "main",
+      "baseRefOid": "d73055dec8c0f8b4901c2e495d6cec4b54e30d69",
+      "headRepository": "wilaw/SCTE35-over-MSF-Event-Timeline",
+      "headRefName": "wilaw-patch-1",
+      "headRefOid": "c1a5c226954e90ef75516a668c8fdf26a73d041c",
+      "closedAt": "2026-07-03T09:43:00Z",
+      "mergedAt": "2026-07-03T09:43:00Z",
+      "mergedBy": "wilaw",
+      "mergeCommit": {
+        "oid": "5ac67350b504baf631c9aa8a3ab37413336264a8"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
