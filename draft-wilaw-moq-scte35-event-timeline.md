@@ -33,16 +33,12 @@ author:
     email: snandaku@cisco.com
 
 normative:
-  MSF: I-D.draft-ietf-moq-msf-00
+  MSF: I-D.draft-ietf-moq-msf-01
   JSON: RFC8259
   SCTE35:
     title: "SCTE 35: Digital Program Insertion Cueing Message"
     date: 2022
     target: https://www.scte.org/standards/library/catalog/scte-35-digital-program-insertion-cueing-message/
-  SCTE214-1:
-    title: "SCTE 214-1: MPEG DASH for IP-Based Cable Services Part 1 - MPD Constraints and Extensions"
-    date: 2022
-    target: https://www.scte.org/standards/library/catalog/scte-214-1-mpeg-dash-for-ip-based-cable-services-part-1-mpd-constraints-and-extensions/
 
 informative:
 
