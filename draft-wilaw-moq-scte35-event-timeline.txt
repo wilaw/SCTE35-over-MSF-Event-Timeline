@@ -69,22 +69,23 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Track properties
-   3.  SCTE 35 Mapping to MSF Event Timeline
-     3.1.  Record Structure
-     3.2.  Index Selection
-     3.3.  Payload Encoding Requirements
-   4.  Examples
-     4.1.  Example 1: Binary Encoding with PTS Timing
-     4.2.  Example 2: XML Encoding with Immediate Flag
-     4.3.  Example 3: Mixed Timing (UTC and Cancellation)
-   5.  Security Considerations
-     5.1.  Integrity and Authenticity
-     5.2.  Payload Validation
-     5.3.  Denial of Service (DoS)
-   6.  IANA Considerations
-   7.  Acknowledgments
-   8.  Normative References
+   2.  Conventions and Definitions
+   3.  Track properties
+   4.  SCTE 35 Mapping to MSF Event Timeline
+     4.1.  Record Structure
+     4.2.  Index Selection
+     4.3.  Payload Encoding Requirements
+   5.  Examples
+     5.1.  Example 1: Binary Encoding with PTS Timing
+     5.2.  Example 2: XML Encoding with Immediate Flag
+     5.3.  Example 3: Mixed Timing (UTC and Cancellation)
+   6.  Security Considerations
+     6.1.  Integrity and Authenticity
+     6.2.  Payload Validation
+     6.3.  Denial of Service (DoS)
+   7.  IANA Considerations
+   8.  Acknowledgments
+   9.  Normative References
    Authors' Addresses
 
 1.  Introduction
@@ -95,7 +96,15 @@ Table of Contents
    boundaries, and other broadcast events.  This draft specifies how
    SCTE35 data can be transmitted using MSF Event Timeline tracks.
 
-2.  Track properties
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Track properties
 
    An MSF track carrying [SCTE35] data MUST
 
@@ -107,9 +116,9 @@ Table of Contents
    *  declare an eventType value of "urn:scte:scte35:2022:xml" if using
       xml splice information
 
-3.  SCTE 35 Mapping to MSF Event Timeline
+4.  SCTE 35 Mapping to MSF Event Timeline
 
-3.1.  Record Structure
+4.1.  Record Structure
 
    Each record in the MSF Event Timeline track for SCTE 35 MUST be a
    JSON object conforming to the Event Timeline data format defined in
@@ -153,7 +162,7 @@ Table of Contents
    splice_event_cancel_indicator, etc.) and duplicating it in the
    envelope would be redundant.
 
-3.2.  Index Selection
+4.2.  Index Selection
 
    Each record MUST select its index reference field according to the
    following precedence, applied to the SCTE 35 message being carried:
@@ -200,7 +209,7 @@ Table of Contents
    tracks with a single, uniform timing source, which SCTE 35 signaling
    is not.
 
-3.3.  Payload Encoding Requirements
+4.3.  Payload Encoding Requirements
 
    *  Binary Payloads: When the track is configured for binary carriage,
       the scte35_payload MUST be a Base64-encoded string of the
@@ -215,7 +224,7 @@ Table of Contents
    Implementations MUST NOT mix binary and XML payloads within the same
    MSF Event Timeline track to ensure predictable parsing at the client.
 
-4.  Examples
+5.  Examples
 
    To illustrate the implementation of SCTE 35 within the MSF Event
    Timeline track, the following examples demonstrate the mapping of
@@ -223,7 +232,7 @@ Table of Contents
    reference fields — and the two supported encoding formats (Binary and
    XML).
 
-4.1.  Example 1: Binary Encoding with PTS Timing
+5.1.  Example 1: Binary Encoding with PTS Timing
 
    This example shows the standard frame-accurate splice using a
    pts_time.  Per Section 3.2 case 1, the record uses m, the calculated
@@ -245,7 +254,7 @@ Table of Contents
      }
    ]
 
-4.2.  Example 2: XML Encoding with Immediate Flag
+5.2.  Example 2: XML Encoding with Immediate Flag
 
    In this scenario, the track is configured for XML.  The first record
    illustrates an "immediate" event (splice_immediate_flag="1", no PTS)
@@ -269,7 +278,7 @@ Table of Contents
      }
    ]
 
-4.3.  Example 3: Mixed Timing (UTC and Cancellation)
+5.3.  Example 3: Mixed Timing (UTC and Cancellation)
 
    This example demonstrates a track that varies its index reference
    field record-to-record, as permitted by Section 3.2.  The first
@@ -294,13 +303,13 @@ Table of Contents
      }
    ]
 
-5.  Security Considerations
+6.  Security Considerations
 
    The carriage of SCTE 35 signals within the MSF Event Timeline track
    inherits the security considerations of both the underlying MSF
    transport and the SCTE 35 standard itself.
 
-5.1.  Integrity and Authenticity
+6.1.  Integrity and Authenticity
 
    SCTE 35 messages are frequently used to trigger high-value business
    logic, such as the insertion of advertising or the enforcement of
@@ -309,7 +318,7 @@ Table of Contents
    modify the "m" timing value or the "scte35_payload" to disrupt ad
    delivery or cause unauthorized content transitions.
 
-5.2.  Payload Validation
+6.2.  Payload Validation
 
    Implementations MUST treat the scte35_payload as untrusted data.
    Receivers should implement robust parsing for both Base64-encoded
@@ -320,14 +329,14 @@ Table of Contents
    could lead to memory exhaustion if not bound-checked by the JSON
    parser.
 
-5.3.  Denial of Service (DoS)
+6.3.  Denial of Service (DoS)
 
    An attacker could inject a high frequency of timeline records with
    conflicting "m" values.  This could lead to "event thrashing," where
    the client device is forced to rapidly switch states, potentially
    leading to resource exhaustion or a degraded user experience.
 
-6.  IANA Considerations
+7.  IANA Considerations
 
    This document adds two entries to the "MSF Event Timeline Types"
    registry.
@@ -344,11 +353,11 @@ Table of Contents
 
                                  Table 1
 
-7.  Acknowledgments
+8.  Acknowledgments
 
    The IETF moq workgroup.
 
-8.  Normative References
+9.  Normative References
 
    [JSON]     Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
               Interchange Format", STD 90, RFC 8259,
@@ -359,6 +368,15 @@ Table of Contents
               in Progress, Internet-Draft, draft-ietf-moq-msf-01, 2 June
               2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
               moq-msf-01>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
    [SCTE35]   "SCTE 35: Digital Program Insertion Cueing Message", 2022,
               <https://www.scte.org/standards/library/catalog/scte-35-
