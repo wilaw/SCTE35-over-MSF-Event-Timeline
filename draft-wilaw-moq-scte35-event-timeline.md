@@ -58,6 +58,10 @@ transmitting ad hoc data associated with MSF media tracks. {{SCTE35}} markers si
 points, program boundaries, and other broadcast events. This draft specifies how SCTE35
 data can be transmitted using MSF Event Timeline tracks.
 
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
 # Track properties
 An MSF track carrying {{SCTE35}} data MUST
 
