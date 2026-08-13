@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-11T01:56:48.514809+00:00",
+  "timestamp": "2026-08-13T02:11:39.378200+00:00",
   "repo": "wilaw/SCTE35-over-MSF-Event-Timeline",
   "labels": [
     {
@@ -49,7 +49,40 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 4,
+      "id": "I_kwDOSXyNfM8AAAABMagaqQ",
+      "title": "(minor) Section 3.2 wrong reference",
+      "url": "https://github.com/wilaw/SCTE35-over-MSF-Event-Timeline/issues/4",
+      "state": "OPEN",
+      "author": "gwendalsimon",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "In lines 78, 171, 195, and 219, the current draft cites \"Section 3.2\" although it should be 4.2 (based on the current section numbering). It should be a reference to an anchor. ",
+      "createdAt": "2026-08-12T06:52:30Z",
+      "updatedAt": "2026-08-12T06:52:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 5,
+      "id": "I_kwDOSXyNfM8AAAABMah21w",
+      "title": "(minor) examples twice",
+      "url": "https://github.com/wilaw/SCTE35-over-MSF-Event-Timeline/issues/5",
+      "state": "OPEN",
+      "author": "gwendalsimon",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "In the Section 4.1 \"Record structure\", the text includes two examples. These are the same as the examples in the Section 5 \"Examples\". Even if it makes the flow of reading easy in Sec 4.1, I have the feeling that the Section 4.1 should be for formal specification and Section 5 should be for examples. It could be possible to add a link in Sec 4.1 to refer to the examples (but I don't think it is necessary, it is not particularly complicated) ",
+      "createdAt": "2026-08-12T06:55:50Z",
+      "updatedAt": "2026-08-12T06:55:50Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
